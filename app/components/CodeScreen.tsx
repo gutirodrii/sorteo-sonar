@@ -54,20 +54,20 @@ export function CodeScreen({ onCodeVerified }: CodeScreenProps) {
   };
 
   return (
-    <div className="w-screen h-screen bg-white text-black flex flex-col justify-center items-center select-none p-5 relative">
+    <div className={`webapp-container text-black flex flex-col justify-center items-center select-none p-5 relative`}>
       <HelpModal isOpen={showModal} onClose={() => setShowModal(false)} />
 
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col justify-center items-center text-center max-w-[90%] w-full">
         {/* Título principal */}
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-wide">
+        <h1 className="text-3xl font-bold mb-8 tracking-wide">
           Introduce el código situado en tu pulsera
         </h1>
 
         {/* Link de ayuda */}
         <button
           onClick={() => setShowModal(true)}
-          className="text-sm md:text-base text-gray-400 mb-12 underline-offset-2 hover:underline transition-all duration-200"
+          className="text-sm text-gray-400 mb-12 underline-offset-2 hover:underline transition-all duration-200"
         >
           ¿Dónde está mi código?
         </button>

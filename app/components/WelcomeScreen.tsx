@@ -37,13 +37,13 @@ export function WelcomeScreen({ onAdvance }: WelcomeScreenProps) {
 
   return (
     <div 
-      className="w-screen h-screen bg-white text-black flex flex-col justify-start items-center cursor-pointer select-none p-5 overflow-hidden"
+      className="webapp-container text-black flex flex-col justify-start items-center cursor-pointer select-none p-5 overflow-hidden"
       onClick={handleScreenClick}
     >
       {/* Título principal - ubicado en la primera mitad vertical */}
       <div className="flex-1 flex items-center justify-center max-h-[50vh]">
         <h1 
-          className={`text-4xl md:text-6xl lg:text-8xl font-bold tracking-[0.15em] uppercase text-center ${
+          className={`text-4xl font-bold tracking-[0.15em] uppercase text-center ${
             showTitle 
               ? 'animate-fade-visible' 
               : 'animate-fade-hidden'
@@ -60,7 +60,7 @@ export function WelcomeScreen({ onAdvance }: WelcomeScreenProps) {
       <div className="flex-1 flex flex-col justify-evenly items-center text-center max-w-[90%]">
         {/* Subtítulo más llamativo */}
         <p 
-          className={`text-2xl md:text-4xl lg:text-5xl font-semibold mb-16 tracking-wide bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent ${
+          className={`text-2xl font-semibold mb-16 tracking-wide bg-gradient-to-r from-black via-gray-800 to-black bg-clip-text text-transparent ${
             showSubtitle 
               ? 'animate-fade-visible' 
               : 'animate-fade-hidden'
@@ -77,7 +77,7 @@ export function WelcomeScreen({ onAdvance }: WelcomeScreenProps) {
 
         {/* Texto de acción con pulse */}
         <p 
-          className={`text-lg md:text-2xl lg:text-3xl tracking-wide text-gray-500 ${
+          className={`text-lg tracking-wide text-gray-500 ${
             showAction 
               ? 'animate-fade-visible-fast' 
               : 'animate-fade-hidden'

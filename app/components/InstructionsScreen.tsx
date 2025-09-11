@@ -4,20 +4,20 @@ interface InstructionsScreenProps {
 
 export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
   return (
-    <div className="w-screen h-screen bg-white text-black flex flex-col justify-start items-center select-none p-5 overflow-y-auto">
+    <div className="webapp-container text-black flex flex-col justify-start items-center select-none p-5 overflow-y-auto">
       <div className="max-w-2xl w-full flex flex-col items-center pt-8 pb-12">
         {/* Título principal */}
-        {/* <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-12 text-center tracking-wide">
+        {/* <h1 className="text-3xl font-bold mb-12 text-center tracking-wide">
           Instrucciones del Juego
         </h1> */}
 
         {/* Sección de Instrucciones */}
         <div className="w-full mb-10">
-          <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800">
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">
             Instrucciones:
           </h2>
           
-          <ul className="space-y-4 text-base md:text-lg leading-relaxed">
+          <ul className="space-y-4 text-base leading-relaxed">
             <li className="flex items-start">
               <span className="text-black font-semibold mr-3">•</span>
               <span>El premio es único por pulsera y usuario.</span>
@@ -39,11 +39,11 @@ export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
 
         {/* Sección de Premios */}
         <div className="w-full mb-12">
-          <h2 className="text-xl md:text-2xl font-semibold mb-6 text-gray-800">
+          <h2 className="text-xl font-semibold mb-6 text-gray-800">
             Premios:
           </h2>
           
-          <p className="text-base md:text-lg mb-6 text-gray-700">
+          <p className="text-base mb-6 text-gray-700">
             Según el resultado del dado obtendrás los siguientes premio.
           </p>
 
@@ -62,10 +62,10 @@ export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
                   key={number}
                   className="flex justify-between items-center py-3 px-4 bg-white rounded-lg shadow-sm border"
                 >
-                  <span className="text-lg md:text-xl font-bold text-black">
+                  <span className="text-lg font-bold text-black">
                     {number}
                   </span>
-                  <span className="text-lg md:text-xl font-semibold text-green-600">
+                  <span className="text-lg font-semibold text-green-600">
                     {prize}
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
 
         {/* Mensaje de suerte */}
         <div className="text-center mb-8">
-          <p className="text-xl md:text-2xl font-medium text-gray-800">
+          <p className="text-xl font-medium text-gray-800">
             ¡Mucha suerte!
           </p>
         </div>
@@ -84,7 +84,7 @@ export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
         {/* Botón para ir al juego */}
         <button
           onClick={onStartGame}
-          className="px-8 py-4 bg-black text-white text-lg md:text-xl font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 active:scale-95"
+          className="px-8 py-4 bg-black text-white text-lg font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 active:scale-95"
         >
           Ir al juego
         </button>

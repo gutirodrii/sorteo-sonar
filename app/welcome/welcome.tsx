@@ -40,9 +40,9 @@ export function Welcome() {
     
     case "game":
       return (
-        <div className="w-screen h-screen bg-white text-black flex flex-col justify-center items-center select-none p-5">
-          <h1 className="text-4xl md:text-6xl font-bold mb-8">¡PRÓXIMAMENTE!</h1>
-          <p className="text-xl md:text-2xl text-gray-600">Pantalla del juego</p>
+        <div className="webapp-container text-black flex flex-col justify-center items-center select-none p-5">
+          <h1 className="text-4xl font-bold mb-8">¡PRÓXIMAMENTE!</h1>
+          <p className="text-xl text-gray-600">Pantalla del juego</p>
         </div>
       );
     

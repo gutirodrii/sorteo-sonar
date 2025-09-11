@@ -26,6 +26,16 @@
   .animate-shake {
     animation: shake 0.5s ease-in-out;
   }
+  
+  /* Contenedor principal de la webapp */
+  .webapp-container {
+    width: 100vw;
+    height: 100vh;
+    max-width: 425px;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Keyframe para animación de temblor */
@@ -40,8 +50,18 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  background-color: white;
+  background-color: #f5f5f5;
   color: black;
   height: 100vh;
   overflow: hidden;
+}
+
+/* En pantallas más grandes que 1024px, centrar y agregar fondo gris */
+@media (min-width: 1025px) {
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e5e5e5;
+  }
 }
