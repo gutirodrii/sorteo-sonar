@@ -33,6 +33,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        {/* Fondo y mockup solo en pantallas >425px */}
+        <div className="hidden min-[426px]:block">
+          <img src="/Sonarbg.jpg" alt="Background" className="fixed inset-0 w-full h-full object-cover" />
+          <div className="fixed inset-0 flex items-center justify-center z-10 pointer-events-none">
+            <img src="/mockup.png" alt="iPhone Mockup" className="w-[400px] object-contain pointer-events-none" />
+          </div>
+        </div>
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -29,13 +29,37 @@
   
   /* Contenedor principal de la webapp */
   .webapp-container {
-    width: 100vw;
-    height: 100vh;
+    width: 100svw;
+    height: 100svh;
+    padding: 60px 10px 40px 10px;
+    overflow-y: auto;
     max-width: 425px;
-    margin: 0 auto;
+    margin: auto;
+    justify-content: center;
     background-color: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   }
+
+  /* Contenedor del mockup para pantallas grandes */
+  @media (min-width: 426px) {
+    .webapp-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 370px; /* Mantener el mismo ancho que en móvil */
+      height: 790px; /* Alto del frame del iPhone */
+      margin: 0;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 40px;
+      z-index: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 60px 10px 40px 10px; /* Top notch + bottom safe zone */
+      box-sizing: border-box;
+    }
+  }
+  
 }
 
 /* Keyframe para animación de temblor */
@@ -56,12 +80,3 @@ body {
   overflow: hidden;
 }
 
-/* En pantallas más grandes que 1024px, centrar y agregar fondo gris */
-@media (min-width: 1025px) {
-  body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #e5e5e5;
-  }
-}

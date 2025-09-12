@@ -4,8 +4,8 @@ interface InstructionsScreenProps {
 
 export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
   return (
-    <div className="webapp-container text-black flex flex-col justify-start items-center select-none p-5 overflow-y-auto">
-      <div className="max-w-2xl w-full flex flex-col items-center pt-8 pb-12">
+    <div className="webapp-container text-black select-none">
+      <div className="flex flex-col items-center p-5 pb-8 min-h-full">
         {/* Título principal */}
         {/* <h1 className="text-3xl font-bold mb-12 text-center tracking-wide">
           Instrucciones del Juego
@@ -82,12 +82,14 @@ export function InstructionsScreen({ onStartGame }: InstructionsScreenProps) {
         </div>
 
         {/* Botón para ir al juego */}
-        <button
-          onClick={onStartGame}
-          className="px-8 py-4 bg-black text-white text-lg font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 active:scale-95"
-        >
-          Ir al juego
-        </button>
+        <div className="w-full flex justify-center mt-auto pt-4">
+          <button
+            onClick={onStartGame}
+            className="px-8 py-4 bg-black text-white text-lg font-semibold rounded-lg hover:bg-gray-800 transition-all duration-200 transform hover:scale-105 active:scale-95"
+          >
+            Ir al juego
+          </button>
+        </div>
       </div>
     </div>
   );
