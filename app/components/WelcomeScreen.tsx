@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { usePageTelemetry } from "../utils/usePageTelemetry";
 
 interface WelcomeScreenProps {
   onAdvance: () => void;
@@ -9,6 +10,7 @@ export function WelcomeScreen({ onAdvance }: WelcomeScreenProps) {
   const [showTitle, setShowTitle] = useState(false);
   const [showSubtitle, setShowSubtitle] = useState(false);
   const [showAction, setShowAction] = useState(false);
+  const { trackClick } = usePageTelemetry("welcome");
 
   useEffect(() => {
     // Secuencia de fadeIn
@@ -31,6 +33,7 @@ export function WelcomeScreen({ onAdvance }: WelcomeScreenProps) {
 
   const handleScreenClick = () => {
     if (canAdvance) {
+      trackClick("advance");
       onAdvance();
     }
   };
