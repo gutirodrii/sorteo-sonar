@@ -17,35 +17,29 @@ const API_BASE_URL = envUrl
  */
 export type UserState = 0 | 1 | 2;
 
+export type CreateUserResponse = {
+  id: number;
+  pulsera_id: string;
+  state: number;
+  group_id: number | null;
+};
+
 export type GetUserStateResponse = {
   state: UserState;
 };
 
-export type TrackScreenResponse = {
-  id: string;
-  user_id: string;
-  screen_name: string;
-  timestamp: string;
-};
-
 export type ThrowDiceResponse = {
-  id: string;
-  user_id: string;
+  id: number;
+  user_id: number;
   value: number;
-  throw_number: number;
-  timestamp: string;
-};
-
-export type UpdateStateResponse = {
-  id: string;
-  state: number;
+  throw_time: string;
 };
 
 export type ClaimFirstResponse = {
-  id: string;
+  id: number;
+  user_id: number;
+  true_value: number;
   claimed_value: number;
-  actual_first_value: number;
-  is_honest: boolean;
 };
 
 export type ApiError = {
@@ -53,19 +47,72 @@ export type ApiError = {
 };
 
 // ============================================
+// Errores personalizados
+// ============================================
+
+export class UserNotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UserNotFoundError";
+  }
+}
+
+export class PulseraAlreadyRegisteredError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "PulseraAlreadyRegisteredError";
+  }
+}
+
+// ============================================
 // Funciones de API
 // ============================================
 
 /**
- * Obtener el estado de un usuario por su ID (código de pulsera)
+ * Crear un usuario nuevo a partir de un pulsera_id
+ * POST /users/
+ *
+ * Respuestas:
+ * - 200: User creado { id, pulsera_id, state, group_id }
+ * - 400: "Pulsera ID does not exist" → pulsera inválida
+ * - 400: "Pulsera already registered" → ya existe un usuario con esa pulsera
+ */
+export async function createUser(pulseraId: string): Promise<CreateUserResponse> {
+  const response = await fetch(`${API_BASE_URL}/users/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pulsera_id: pulseraId }),
+  });
+
+  if (!response.ok) {
+    const error = await response
+      .json()
+      .catch(() => ({ detail: "Error al crear usuario" }));
+
+    if (response.status === 400) {
+      if (error.detail === "Pulsera ID does not exist") {
+        throw new UserNotFoundError("Código de pulsera inválido");
+      }
+      if (error.detail === "Pulsera already registered") {
+        throw new PulseraAlreadyRegisteredError(error.detail);
+      }
+    }
+    throw new Error(error.detail || `HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Obtener el estado de un usuario por su ID entero
  * GET /users/{user_id}/state
  *
  * Respuestas:
- * - 200: { state: 0 | 1 | 2 }
- * - 404: Usuario no encontrado (código inválido)
+ * - 200: bare integer 0 | 1 | 2  (la API devuelve user.state directamente)
+ * - 404: Usuario no encontrado
  */
 export async function getUserState(
-  userId: string,
+  userId: number,
 ): Promise<GetUserStateResponse> {
   const response = await fetch(`${API_BASE_URL}/users/${userId}/state`, {
     method: "GET",
@@ -74,7 +121,7 @@ export async function getUserState(
 
   if (!response.ok) {
     if (response.status === 404) {
-      throw new UserNotFoundError("Código de pulsera inválido");
+      throw new UserNotFoundError("Usuario no encontrado");
     }
     const error = await response
       .json()
@@ -82,17 +129,9 @@ export async function getUserState(
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
 
-  return response.json();
-}
-
-/**
- * Error personalizado para usuario no encontrado
- */
-export class UserNotFoundError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "UserNotFoundError";
-  }
+  // La API devuelve un entero bare (user.state), no { state: int }
+  const stateValue = await response.json();
+  return { state: stateValue as UserState };
 }
 
 /**
@@ -101,9 +140,9 @@ export class UserNotFoundError extends Error {
  * screen_name: "screen1" | "screen2" | "screen3"
  */
 export async function trackScreen(
-  userId: string,
+  userId: number,
   screenName: "screen1" | "screen2" | "screen3",
-): Promise<TrackScreenResponse> {
+): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/users/${userId}/screens`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -116,15 +155,13 @@ export async function trackScreen(
       .catch(() => ({ detail: "Error al trackear pantalla" }));
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
-
-  return response.json();
 }
 
 /**
  * Lanzar dado - el backend devuelve el resultado
  * POST /users/{user_id}/throw
  */
-export async function throwDice(userId: string): Promise<ThrowDiceResponse> {
+export async function throwDice(userId: number): Promise<ThrowDiceResponse> {
   const response = await fetch(`${API_BASE_URL}/users/${userId}/throw`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -147,9 +184,9 @@ export async function throwDice(userId: string): Promise<ThrowDiceResponse> {
  * state: 0 = inicio, 1 = jugando, 2 = finalizado
  */
 export async function updateUserState(
-  userId: string,
+  userId: number,
   state: UserState,
-): Promise<UpdateStateResponse> {
+): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/users/${userId}/state`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -162,8 +199,6 @@ export async function updateUserState(
       .catch(() => ({ detail: "Error al actualizar estado" }));
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
-
-  return response.json();
 }
 
 /**
@@ -175,7 +210,7 @@ export async function updateUserState(
  * - 400: Usuario ya reclamó o no ha tirado nunca
  */
 export async function claimFirstThrow(
-  userId: string,
+  userId: number,
   claimedValue: number,
 ): Promise<ClaimFirstResponse> {
   const response = await fetch(`${API_BASE_URL}/users/${userId}/claim-first`, {
@@ -249,25 +284,6 @@ export async function postTelemetry(
   await artificialDelay();
   console.debug("[telemetry]", payload);
   return { ok: true };
-}
-
-function computeTickets(value: number): number {
-  switch (value) {
-    case 1:
-      return 10;
-    case 2:
-      return 20;
-    case 3:
-      return 30;
-    case 4:
-      return 40;
-    case 5:
-      return 50;
-    case 6:
-      return 0;
-    default:
-      return 0;
-  }
 }
 
 async function artificialDelay(ms = 350) {

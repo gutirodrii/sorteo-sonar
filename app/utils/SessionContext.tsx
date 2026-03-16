@@ -8,12 +8,14 @@ import {
   useEffect,
 } from "react";
 import {
+  createUser,
   getUserState,
   trackScreen,
   throwDice,
   updateUserState,
   claimFirstThrow,
   UserNotFoundError,
+  PulseraAlreadyRegisteredError,
   type UserState,
   type ThrowDiceResponse,
   type ClaimFirstResponse,
@@ -31,7 +33,8 @@ export type TreatmentConfig = {
 };
 
 export type ParticipantSession = {
-  userId: string | null; // ID del usuario (código de pulsera)
+  userId: number | null; // ID entero del usuario en la base de datos
+  pulseraId: string | null; // Código de la pulsera (para display y recuperación)
   userState: UserState | null; // Estado actual del usuario en la API
   consentAccepted: boolean;
   hasCompleted: boolean;
@@ -115,6 +118,7 @@ function computeTickets(value: number | null): number {
 
 const INITIAL_SESSION: ParticipantSession = {
   userId: null,
+  pulseraId: null,
   userState: null,
   consentAccepted: false,
   hasCompleted: false,
@@ -165,30 +169,70 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, [session]);
 
   /**
-   * Verificar usuario por su código de pulsera (userId)
-   * Retorna el estado del usuario o error si no existe
+   * Verificar/registrar usuario por su código de pulsera
+   * Llama a POST /users/ para crear el usuario (si no existe) y obtener el integer user_id.
+   * Si la pulsera ya está registrada, intenta recuperar la sesión almacenada localmente.
    */
   const verifyUser = useCallback(
-    async (userId: string): Promise<VerifyUserResult> => {
+    async (pulseraId: string): Promise<VerifyUserResult> => {
       setIsVerifying(true);
       try {
-        const response = await getUserState(userId);
+        // Intentar crear el usuario en la API
+        const createResponse = await createUser(pulseraId);
         const newSession = {
           ...sessionRef.current,
-          userId,
-          userState: response.state,
-          // Si el estado es 2, marcar como completado
-          hasCompleted: response.state === 2,
+          userId: createResponse.id,
+          pulseraId,
+          userState: createResponse.state as UserState,
+          hasCompleted: createResponse.state === 2,
         };
         persist(newSession);
         console.log(
-          "[API] Usuario verificado:",
-          userId,
+          "[API] Usuario creado:",
+          createResponse.id,
           "Estado:",
-          response.state,
+          createResponse.state,
         );
-        return { success: true, state: response.state };
+        return { success: true, state: createResponse.state as UserState };
       } catch (error) {
+        // Pulsera ya registrada: intentar recuperar sesión almacenada
+        if (error instanceof PulseraAlreadyRegisteredError) {
+          const stored =
+            typeof window !== "undefined"
+              ? localStorage.getItem("ss_session")
+              : null;
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored) as ParticipantSession;
+              if (parsed.pulseraId === pulseraId && parsed.userId !== null) {
+                const stateResponse = await getUserState(parsed.userId);
+                const recoveredSession = {
+                  ...parsed,
+                  userState: stateResponse.state,
+                  hasCompleted: stateResponse.state === 2,
+                  telemetry: { events: [] },
+                };
+                persist(recoveredSession);
+                console.log(
+                  "[API] Sesión recuperada para pulsera:",
+                  pulseraId,
+                  "Estado:",
+                  stateResponse.state,
+                );
+                return { success: true, state: stateResponse.state };
+              }
+            } catch (recoverError) {
+              console.error("[API] Error recuperando sesión:", recoverError);
+            }
+          }
+          return {
+            success: false,
+            error:
+              "Esta pulsera ya fue registrada. Si participaste antes, utiliza el mismo dispositivo.",
+            isNotFound: false,
+          };
+        }
+
         console.error("[API] Error verificando usuario:", error);
 
         if (error instanceof UserNotFoundError) {
@@ -274,8 +318,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         console.log(
           "[API] Valor reclamado:",
           claimedValue,
-          "Honesto:",
-          response.is_honest,
+          "Valor real:",
+          response.true_value,
         );
 
         const newSession = {

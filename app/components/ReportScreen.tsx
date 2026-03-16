@@ -26,8 +26,7 @@ export function ReportScreen({ onSubmitReport }: ReportScreenProps) {
       const response = await submitClaim(value);
       console.log("[Report] Claim enviado:", {
         claimed: value,
-        actual: response.actual_first_value,
-        isHonest: response.is_honest
+        actual: response.true_value,
       });
       onSubmitReport();
     } catch (err) {
