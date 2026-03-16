@@ -107,6 +107,7 @@ export function Dice3D({ onResult, onRollRequest, onRollStart }: Dice3DProps) {
   
   const [result, setResult] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState(false);
+  const isRollingRef = useRef(false);
   
   const animationRef = useRef<{
     startTime: number;
@@ -126,8 +127,9 @@ export function Dice3D({ onResult, onRollRequest, onRollStart }: Dice3DProps) {
 
   // Función para lanzar el dado
   const rollDice = async () => {
-    if (isRolling || !diceRef.current) return;
+    if (isRollingRef.current || !diceRef.current) return;
 
+    isRollingRef.current = true;
     setIsRolling(true);
     setResult(null);
     onRollStart?.();
@@ -140,6 +142,7 @@ export function Dice3D({ onResult, onRollRequest, onRollStart }: Dice3DProps) {
         targetResult = await onRollRequest();
       } catch (error) {
         console.error('[Dice3D] Error obteniendo resultado de API:', error);
+        isRollingRef.current = false;
         setIsRolling(false);
         return; // No lanzar si hay error en la API
       }
@@ -220,6 +223,7 @@ export function Dice3D({ onResult, onRollRequest, onRollStart }: Dice3DProps) {
         diceRef.current.quaternion.copy(targetQuaternion);
         diceRef.current.position.y = 0;
         setResult(targetResult);
+        isRollingRef.current = false;
         setIsRolling(false);
         animationRef.current = null;
         onResult?.(targetResult);

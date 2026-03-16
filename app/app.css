@@ -97,7 +97,7 @@ body {
 }
 .dice-container {
   width: 100%;
-  height: clamp(220px, 40svh, 320px);
+  height: clamp(260px, 52svh, 420px);
   cursor: pointer;
   outline: none;
 }
