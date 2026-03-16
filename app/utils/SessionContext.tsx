@@ -6,6 +6,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useLayoutEffect,
 } from "react";
 import {
   createUser,
@@ -163,8 +164,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Referencia al session actual para usar en callbacks
+  // useLayoutEffect garantiza que el ref esté actualizado antes que cualquier
+  // useEffect de componentes hijos (los effects se ejecutan hijo→padre, pero
+  // useLayoutEffect siempre corre antes que useEffect en todos los componentes).
   const sessionRef = useRef(session);
-  useEffect(() => {
+  useLayoutEffect(() => {
     sessionRef.current = session;
   }, [session]);
 
