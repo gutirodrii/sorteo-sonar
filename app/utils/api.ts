@@ -18,10 +18,12 @@ const API_BASE_URL = envUrl
 export type UserState = 0 | 1 | 2;
 
 export type CreateUserResponse = {
-  id: number;
-  pulsera_id: string;
+  userId: number;
+  pulseraId: string;
   state: number;
-  group_id: number | null;
+  groupId: number | null;
+  thrower?: number | null;
+  firstThrowId?: number | null;
 };
 
 export type GetUserStateResponse = {
@@ -29,17 +31,17 @@ export type GetUserStateResponse = {
 };
 
 export type ThrowDiceResponse = {
-  id: number;
-  user_id: number;
+  throwId: number;
+  userId: number;
   value: number;
-  throw_time: string;
+  throwTime: string;
 };
 
 export type ClaimFirstResponse = {
-  id: number;
-  user_id: number;
-  true_value: number;
-  claimed_value: number;
+  throwId: number;
+  userId: number;
+  trueValue: number;
+  claimedValue: number;
 };
 
 export type ApiError = {
@@ -129,8 +131,9 @@ export async function getUserState(
     throw new Error(error.detail || `HTTP ${response.status}`);
   }
 
-  // La API devuelve un entero bare (user.state), no { state: int }
-  const stateValue = await response.json();
+  // La API devuelve { userId, state }
+  const data = await response.json();
+  const stateValue = typeof data === "object" && data !== null ? data.state : data;
   return { state: stateValue as UserState };
 }
 

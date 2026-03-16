@@ -185,7 +185,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         const createResponse = await createUser(pulseraId);
         const newSession = {
           ...sessionRef.current,
-          userId: createResponse.id,
+          userId: createResponse.userId,
           pulseraId,
           userState: createResponse.state as UserState,
           hasCompleted: createResponse.state === 2,
@@ -193,7 +193,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         persist(newSession);
         console.log(
           "[API] Usuario creado:",
-          createResponse.id,
+          createResponse.userId,
           "Estado:",
           createResponse.state,
         );
@@ -323,7 +323,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
           "[API] Valor reclamado:",
           claimedValue,
           "Valor real:",
-          response.true_value,
+          response.trueValue,
         );
 
         const newSession = {
