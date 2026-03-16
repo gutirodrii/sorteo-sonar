@@ -77,20 +77,6 @@ export function GameScreen({ onContinueToReport }: GameScreenProps) {
           </div>
         )}
 
-        {/* Historial de tiradas */}
-        {session.diceRolls.length > 0 && (
-          <div className="w-full max-w-sm mt-3">
-            <h3 className="font-semibold mb-1 text-sm">Historial de tiradas</h3>
-            <ul className="text-xs text-gray-700 list-disc pl-5 max-h-16 overflow-y-auto">
-              {session.diceRolls.map((r, idx) => (
-                <li key={idx}>
-                  #{idx + 1}: {r.value} {idx === 0 ? "(primera)" : ""}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
         {/* Botón continuar — siempre visible al final */}
         <button
           onClick={onContinueToReport}
